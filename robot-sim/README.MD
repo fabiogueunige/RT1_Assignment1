@@ -9,13 +9,9 @@ Assignment
 ## Fast Explenation
 
 * The code starts by initializing the robot and setting up constants and thresholds.  
-
 * It defines functions for motion, sensor readings, reaching tokens, operation management, and token transport.  
-
 * The main function initializes sets for seen and done tokens, performs an initial token discovery, and then transports the tokens to the station.  
-
 * It checks for additional tokens and transports them if found.  
-
 * Finally, the program terminates.  
 
 
