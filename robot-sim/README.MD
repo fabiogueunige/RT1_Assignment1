@@ -156,6 +156,7 @@ function to move the robot to the prefixed point:
 ```
 
 ### Function to manage the operations
+
 function that plan the operations of the Robot 
  ```
     control to -1 to implement an error
@@ -182,6 +183,7 @@ function that plan the operations of the Robot
 ```
 
 ### Function to transport the tokens from their position to the station  
+
 function that calls the menager operation for the complete process of every token one by one  
 ```
     distance to 0  init
@@ -193,6 +195,7 @@ function that calls the menager operation for the complete process of every toke
 ```
 
 ### Main function
+
 main function to make the programm runnable
 ```    
     tkseen create a set to save all the token seen  
