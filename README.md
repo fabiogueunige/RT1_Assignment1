@@ -7,7 +7,8 @@ Short Descpription
 This is the first assignment for the Reserch Track I course of Robotics Engineering Master Degree in Genoa.  
 CHANGE
 This project consists into move a robot to take all the tokens in the space and to put all of them toghether in a 2D environment  
-Video example:
+Video example:  
+
 ![gif funzionamento](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmt2a2ozMWN4dGlwdGI3OGhtbXVvcjZvYnhoZWY5NXZqdnVtaGI4MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hn9WiOzaO1f13MklnA/giphy.gif) 
 
 Installing and running
