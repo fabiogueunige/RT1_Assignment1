@@ -1,7 +1,7 @@
 Python Robotics Assignment 1
 ================================
 
-This is the explanetion of the `assignment.py` code through a pseudocode step by step  
+This is the explanetion of the `assignment.py` code through a pseudocode, seeing it step by step  
 
 Assignment
 ----------------------
@@ -13,6 +13,16 @@ Assignment
 * The main function initializes sets for seen and done tokens, performs an initial token discovery, and then transports the tokens to the station.
 * It checks for additional tokens and transports them if found.
 * Finally, the program terminates.
+
+## Prerequisites:
+
+You can find all the necessary information [here](https://github.com/fabiogueunige/RT1_Assignment1/blob/main/README.md)
+
+## Running: 
+
+```bash
+  $ python3 run.py assignment.py 
+```  
 
 ### Importing necessary libraries
 
@@ -36,24 +46,25 @@ Robot init
 | turn     | speed(int), seconds(int) | void     | Makes the robot turning on itself |
 
 
-### Function to escape from the token
-function turning_back(vel):
-    drive(-6*vel, tempo)
-    turn (5*velocity, 1.2)
+### Function to escape from the token  
+- Function to turn back on itself after taking a token or releasing it
+    drive back 
+    turn on himsself
 
-### Function to find the closest token still not taken
-function find_right_token(tkdone):
-    dist = 100
-    distmin = 100
-    tcode = -1
-    for token in R.see():
-        if token.dist < distmin and token.info.code not in tkdone:
-            dist = token.dist
-            rot_y = token.rot_y
-            tcode = token.info.code
-            distmin = dist
-    if dist == 100:
-        return -1, -1, -1
+### Function to find the closest token still not taken  
+- Function to find the nearest token to bring to the station (the release point)
+    dist to 100
+    distmin to 100 to compare distances
+    tcode to -1 for error checking
+    
+    for each token seen by the robot:
+        - if token distance is less than distmin and token is not in tkdone
+            dist to token.dist distance of the token
+            rot_y to token.rot_y angle of the token
+            tcode to token.info.code code of the token
+            distmin to dist to change the minimum distance
+    - if dist to 100 than no token seen
+        return all parameters as errors
     else:
         return dist, rot_y, tcode
 
