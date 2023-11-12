@@ -8,11 +8,16 @@ Assignment
 
 ## Fast Explenation
 
-* The code starts by initializing the robot and setting up constants and thresholds.
-* It defines functions for motion, sensor readings, reaching tokens, operation management, and token transport.
-* The main function initializes sets for seen and done tokens, performs an initial token discovery, and then transports the tokens to the station.
-* It checks for additional tokens and transports them if found.
-* Finally, the program terminates.
+* The code starts by initializing the robot and setting up constants and thresholds.  
+
+* It defines functions for motion, sensor readings, reaching tokens, operation management, and token transport.  
+
+* The main function initializes sets for seen and done tokens, performs an initial token discovery, and then transports the tokens to the station.  
+
+* It checks for additional tokens and transports them if found.  
+
+* Finally, the program terminates.  
+
 
 ## Prerequisites:
 
@@ -30,13 +35,20 @@ You can find all the necessary information [here](https://github.com/fabiogueuni
 Robot init
 
 ### Setting up constants and thresholds  
-*velocity   : common velocity
-*tempo      : common time
-*a_th       : angle treshold
-*d_th       : distance treshold to grab the token
-*d_th_reach : distance treshold to release the token
-*disnear    : distance to slow down Robot velocity
-*lap        : number of turns to have always 360 degree 
+*velocity   : common velocity  
+
+*tempo      : common time  
+
+*a_th       : angle treshold  
+
+*d_th       : distance treshold to grab the token  
+
+*d_th_reach : distance treshold to release the token  
+
+*disnear    : distance to slow down Robot velocity  
+
+*lap        : number of turns to have always 360 degree   
+
 
 ### Library functions  
 
@@ -47,43 +59,73 @@ Robot init
 
 
 ### Function to escape from the token  
-Function to turn back on itself after taking a token or releasing it
-    drive back 
-    turn on himsself
+Function to turn back on itself after taking a token or releasing it  
+
+    drive back   
+
+    turn on himsself  
+
 
 ### Function to find the closest token still not taken  
 Function to find the nearest token to bring to the station (the release point)  
-    dist to 100  
-    distmin to 100 to compare distances  
-    tcode to -1 for error checking  
+
+    dist to 100    
+
+    distmin to 100 to compare distances   
+
+    tcode to -1 for error checking   
+
     
-    - for each token seen by the robot:  
+    - for each token seen by the robot:    
+
         - if token distance is less than distmin and token is not in tkdone  
-            dist to token.dist distance of the token  
+
+            dist to token.dist distance of the token    
+
             rot_y to token.rot_y angle of the token  
-            tcode to token.info.code code of the token  
-            distmin to dist to change the minimum distance   
-    - if dist to 100 than no token seen  
-        return all parameters as errors  
-    - else:  
-        return all the right parameters 
+
+            tcode to token.info.code code of the token   
+
+            distmin to dist to change the minimum distance     
+
+    - if dist to 100 than no token seen    
+
+        return all parameters as errors    
+
+    - else:    
+
+        return all the right parameters   
+
 
 ### Function to find all the tokens
-Initial function to start a 360 degree of rotation to find all the token  of the arena 
-    dist to 100 for error checking  
-    - for all (and more to complete always the rotation) 360 rotation  
-        - for each token seen by the robot:    
-            - if token has never be seen by the robot before  
-                dist to token.dist distance of the token  
-                rot_y to token.rot_y angle of the token  
-                tcode to token.info.code code of the token  
-                tkorigin add al the information to a list (let so for next possible improvements)   
-                tkseen add the token to the ones saw by the robot
+Initial function to start a 360 degree of rotation to find all the token  of the arena   
 
-        - if dist equal -1: error  
-            print error message  
+    dist to 100 for error checking    
 
-        turn to complete the rotation  
+    - for all (and more to complete always the rotation) 360 rotation    
+
+        - for each token seen by the robot:      
+
+            - if token has never be seen by the robot before   
+
+                dist to token.dist distance of the token    
+
+                rot_y to token.rot_y angle of the token    
+
+                tcode to token.info.code code of the token    
+
+                tkorigin add al the information to a list (let so for next possible improvements)     
+
+                tkseen add the token to the ones saw by the robot  
+
+
+        - if dist equal -1: error    
+
+            print error message    
+
+
+        turn to complete the rotation    
+
 
 
 ### Function to find the station  
