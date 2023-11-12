@@ -38,7 +38,7 @@ To **run** this code you have to follow a few of steps:
   $ git clone https://github.com/fabiogueunige/RT1_Assignment1.git
   ```
 * move inside robot-sim folder 
- ```bash
+  ```bash
   $ cd robot-sim/
   ```
 * run the code:
