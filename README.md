@@ -8,7 +8,7 @@ This is the first assignment for the Reserch Track I course of Robotics Engineer
 CHANGE
 This project consists into move a robot to take all the tokens in the space and to put all of them toghether in a 2D environment  
 Video example:
-![gif funzionamento](https://github.com/fabiogueunige/RT1_Assignment1/blob/readRes/resources/AssVideo.mp4) 
+![gif funzionamento](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHF1NW5xa3dneXMyNWFveHQ4eDZybGc2aDZ1Nml1ajgxdnhoeXgzMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/SQnbakRCb8ytODSYBY/giphy.gif) 
 
 Installing and running
 ----------------------
