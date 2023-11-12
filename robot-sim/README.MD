@@ -219,35 +219,35 @@ function to move the robot to the prefixed point:
 ### Function to manage the operations
 function that plan the operations of the Robot 
  
-    control = -1  
+    control to -1 to implement an error
 
-    while (control != 0):  
+    - while until control is set to zero:  
 
-        if tk not in tkdone:  
+        - if token not in the released ones:  
 
-            if (distance != -1):  
+            - if distance is different to -1:  
 
-                control = reaching_token(distance, angle, tk, tkdone)  
+                control = reaching_token(distance, angle, tk, tkdone) call the function and takes the returned value
 
-            (distance, angle, tk) = find_right_token(tkdone)  
+            (distance, angle, tk) = find_right_token(tkdone)  look for the token
 
-            if (distance == -1):  
+            - if distance equals -1 then error: 
 
-                turn(velocity, tempo)  
+                turn to look other places
 
-            elif (control != 0):  
+            - else if control different to 0:  
 
-                control = reaching_token(distance, angle, tk, tkdone)  
+                control = reaching_token(distance, angle, tk, tkdone)  keep calling the function to reach the token 
 
-        else:  
+        - else: (token in released ones)
 
-            (distance, angle) = get_station(tk)  
+            (distance, angle) = get_station(tk) bring to station
 
-            if (distance == -1):  
+            - if distance equals -1:  
 
-                turn(velocity, tempo)  
+                turn to look other places
 
-            else:  
+            - else: (has to reach the token of the station) 
 
                 control = reaching_token(distance, angle, tk, tkdone)  
 
@@ -256,17 +256,17 @@ function that plan the operations of the Robot
 
 function that calls the menager operation for the complete process of every token one by one  
 
-    distance = 0  
+    distance to 0  init
 
-    angle = 0  
+    angle to 0  init
 
-    while (len(tkseen) != len(tkdone)):  
+    - while the two dimensions are not the same:  
 
-        (distance, angle, tc) = find_right_token(tkdone)  
+        (distance, angle, tc) = find_right_token(tkdone)  look for the token
 
-        manager(distance, angle, tc, tkdone)  
+        manager(distance, angle, tc, tkdone)  Grab the token
 
-        manager(distance, angle, tkorigin[0][0], tkdone)  
+        manager(distance, angle, tkorigin[0][0], tkdone)  release the token in fixed point
 
 
 ### Main function
