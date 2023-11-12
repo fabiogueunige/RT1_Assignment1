@@ -47,54 +47,60 @@ Robot init
 
 
 ### Function to escape from the token  
-- Function to turn back on itself after taking a token or releasing it
+Function to turn back on itself after taking a token or releasing it
     drive back 
     turn on himsself
 
 ### Function to find the closest token still not taken  
-- Function to find the nearest token to bring to the station (the release point)
-    dist to 100
-    distmin to 100 to compare distances
-    tcode to -1 for error checking
+Function to find the nearest token to bring to the station (the release point)  
+    dist to 100  
+    distmin to 100 to compare distances  
+    tcode to -1 for error checking  
     
-    for each token seen by the robot:
-        - if token distance is less than distmin and token is not in tkdone
-            dist to token.dist distance of the token
-            rot_y to token.rot_y angle of the token
-            tcode to token.info.code code of the token
-            distmin to dist to change the minimum distance
-    - if dist to 100 than no token seen
-        return all parameters as errors
-    else:
-        return dist, rot_y, tcode
+    - for each token seen by the robot:  
+        - if token distance is less than distmin and token is not in tkdone  
+            dist to token.dist distance of the token  
+            rot_y to token.rot_y angle of the token  
+            tcode to token.info.code code of the token  
+            distmin to dist to change the minimum distance   
+    - if dist to 100 than no token seen  
+        return all parameters as errors  
+    - else:  
+        return all the right parameters 
 
 ### Function to find all the tokens
-function find_all_token(tkseen, tkorigin):
-    dist = 100
-    for i in range(0, lap):
-        for token in R.see():
-            if token.info.code not in tkseen:
-                dist = token.dist
-                rot_y = token.rot_y
-                tcode = token.info.code
-                tkorigin.append([tcode, dist, rot_y])
-                tkseen.add(tcode)
-        if dist == -1:
-            print("No token detected in the research of all")
-        turn(4*velocity, tempo/20)
+Initial function to start a 360 degree of rotation to find all the token  of the arena 
+    dist to 100 for error checking  
+    - for all (and more to complete always the rotation) 360 rotation  
+        - for each token seen by the robot:    
+            - if token has never be seen by the robot before  
+                dist to token.dist distance of the token  
+                rot_y to token.rot_y angle of the token  
+                tcode to token.info.code code of the token  
+                tkorigin add al the information to a list (let so for next possible improvements)   
+                tkseen add the token to the ones saw by the robot
 
-### Function to find the station
-function get_station(tko):
-    dist = 100
-    distmin = 100
-    for token in R.see():
-        if token.dist < distmin and token.info.code == tko:
-            dist = token.dist
-            rot_y = token.rot_y
-    if dist == 100:
-        return -1, -1
-    else:
-        return dist, rot_y
+        - if dist equal -1: error  
+            print error message  
+
+        turn to complete the rotation  
+
+
+### Function to find the station  
+
+function to arrive to the assembly point  
+
+    dist to 100   
+    distmin to 100 to compare distances  
+    - for each token seen by the robot:   
+        - if token distance is less than distmin and token is the first token seen by the robot   
+            dist to token.dist distance of the token  
+            rot_y to token.rot_y angle of the token
+   
+    - if dist to 100 than no token seen  
+        return all parameters as errors  
+    - else:  
+        return all the right parameters
 
 ### Function to reach the tokens
 function reaching_token(dist, rot, tk, tkdone):
