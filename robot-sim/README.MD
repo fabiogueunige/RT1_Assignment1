@@ -130,98 +130,180 @@ Initial function to start a 360 degree of rotation to find all the token  of the
 
 ### Function to find the station  
 
-function to arrive to the assembly point  
+function to arrive to the assembly point    
 
-    dist to 100   
-    distmin to 100 to compare distances  
-    - for each token seen by the robot:   
-        - if token distance is less than distmin and token is the first token seen by the robot   
-            dist to token.dist distance of the token  
-            rot_y to token.rot_y angle of the token
+    dist to 100     
+
+    distmin to 100 to compare distances   
+
+    - for each token seen by the robot:     
+
+        - if token distance is less than distmin and token is the first token seen by the robot     
+
+            dist to token.dist distance of the token    
+
+            rot_y to token.rot_y angle of the token  
+
    
-    - if dist to 100 than no token seen  
-        return all parameters as errors  
-    - else:  
-        return all the right parameters
+    - if dist to 100 than no token seen    
 
-### Function to reach the tokens
-function reaching_token(dist, rot, tk, tkdone):
-    if dist < d_th and tk not in tkdone:
-        R.grab()
-        print("Taking the token ", tk)
-        tkdone.add(tk)
-        turning_back(velocity)
-        control = 0
-    elif dist < d_th_reach and tk in tkdone:
-        print("Leaving the token ")
-        R.release()
-        turning_back(velocity)
-        control = 0
-    elif -a_th <= rot <= a_th:
-        if dist < disnear:
-            drive(5*velocity, tempo/4)
-        else:
-            drive(10*velocity, tempo/4)
-        control = 1
-    elif rot < -a_th:
-        turn(-velocity, tempo/4)
-        drive(2*velocity, tempo/2)
-        control = 2
-    elif rot > a_th:
-        turn(velocity, tempo/4)
-        drive(2*velocity, tempo/2)
-        control = 3
-    else:
-        turn(2*velocity, tempo)
-    return control
+        return all parameters as errors   
+
+    - else:    
+
+        return all the right parameters  
+
+
+### Function to reach the tokens  
+
+function to move the robot to the prefixed point:  
+
+    - if dist less than dist treshold and token not taken yet  
+
+        robot grab the token
+
+        print he has taken it  
+
+        tkdone.add(tk) add token to the released ones
+
+        turning_back(velocity) to rotate on it self 
+
+        control to 0 value return that means he finished the task
+
+    - else if dist less than treshold to release the token and token in list of released one
+
+        print he is leaving the token
+
+        robot release the token
+
+        turning_back(velocity)  rotate on itself
+
+        control to 0  
+
+
+    - else if angle is less than the treshold
+
+        - if dist less than treshold for proximity :  
+
+            drive slow
+
+        - else:  
+
+            drive fast
+
+        control to 1 to say he is straight
+
+    - else if  rot less than negative angle treshold:  
+
+        turn left
+
+        drive really slow
+
+        control to 2  to say he is turning left
+
+    - else if  rot bigger than positive angle treshold:  
+
+        turn right  
+
+        drive really slow
+
+        control to 3  to say he is turning right
+
+    else:  
+
+        turn to check again 
+
+    return control to give info about his state   
+
 
 ### Function to manage the operations
-function manager(distance, angle, tk, tkdone):
-    control = -1
-    while (control != 0):
-        if tk not in tkdone:
-            if (distance != -1):
-                control = reaching_token(distance, angle, tk, tkdone)
-            (distance, angle, tk) = find_right_token(tkdone)
-            if (distance == -1):
-                turn(velocity, tempo)
-            elif (control != 0):
-                control = reaching_token(distance, angle, tk, tkdone)
-        else:
-            (distance, angle) = get_station(tk)
-            if (distance == -1):
-                turn(velocity, tempo)
-            else:
-                control = reaching_token(distance, angle, tk, tkdone)
+function that plan the operations of the Robot 
+ 
+    control = -1  
 
-### Function to transport the tokens from their position to the station
-function token_transport(tkseen, tkdone, tkorigin):
-    distance = 0
-    angle = 0
-    while (len(tkseen) != len(tkdone)):
-        (distance, angle, tc) = find_right_token(tkdone)
-        manager(distance, angle, tc, tkdone)
-        manager(distance, angle, tkorigin[0][0], tkdone)
+    while (control != 0):  
+
+        if tk not in tkdone:  
+
+            if (distance != -1):  
+
+                control = reaching_token(distance, angle, tk, tkdone)  
+
+            (distance, angle, tk) = find_right_token(tkdone)  
+
+            if (distance == -1):  
+
+                turn(velocity, tempo)  
+
+            elif (control != 0):  
+
+                control = reaching_token(distance, angle, tk, tkdone)  
+
+        else:  
+
+            (distance, angle) = get_station(tk)  
+
+            if (distance == -1):  
+
+                turn(velocity, tempo)  
+
+            else:  
+
+                control = reaching_token(distance, angle, tk, tkdone)  
+
+
+### Function to transport the tokens from their position to the station  
+
+function that calls the menager operation for the complete process of every token one by one  
+
+    distance = 0  
+
+    angle = 0  
+
+    while (len(tkseen) != len(tkdone)):  
+
+        (distance, angle, tc) = find_right_token(tkdone)  
+
+        manager(distance, angle, tc, tkdone)  
+
+        manager(distance, angle, tkorigin[0][0], tkdone)  
+
 
 ### Main function
-function main():
-    tkseen = set()
-    tkdone = set()
-    counter = 0
-    tkorigin = []
-    drive(2*velocity, tempo)
-    find_all_token(tkseen, tkorigin)
-    tkdone.add(tkorigin[0][0])
-    token_transport(tkseen, tkdone, tkorigin)
-    print("Checking if there are other tokens")
-    counter = len(tkseen)
-    find_all_token(tkseen, tkorigin)
-    if (counter - len(tkseen) != 0):
-        token_transport(tkseen, tkdone, tkorigin)
-    else:
-        print("All the tokens have been found")
-    print("The program terminates")
-    exit()
+
+main function to make the programm runnable
+    tkseen create a set to save all the token seen  
+
+    tkdone create a set to save all the token left to the station  
+
+    counter = 0 init of a length counter  
+
+    tkorigin create a matrix with all the information of the token (when they are seen for the first time)  
+
+    drive to move the Robot at the beginning  
+
+    find_all_token(tkseen, tkorigin)  
+
+    tkdone.add(tkorigin[0][0]) add the first token seen as the station  
+
+    token_transport(tkseen, tkdone, tkorigin) to start the process for all tokens
+
+    print is checking for all tokens  
+
+    counter = as dimension of tkseen vector to save the tmp
+
+    find_all_token(tkseen, tkorigin) check if he completes for all  
+
+    if (counter - len(tkseen) is different from 0):  
+
+        token_transport(tkseen, tkdone, tkorigin) restart the function for the ones forgiven  
+
+    else:  
+
+        print he has found all the tokens  
+
+    print that he has finished his task
+
 
 ### Execution  
 
