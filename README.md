@@ -5,7 +5,10 @@ Short Descpription
 --------------------------------
 
 This is the first assignment for the Reserch Track I course of Robotics Engineering Master Degree in Genoa.  
+CHANGE
 This project consists into move a robot to take all the tokens in the space and to put all of them toghether in a 2D environment  
+Video example:
+![gif funzionamento](https://github.com/fabiogueunige/RT1_Assignment1/blob/readRes/resources/AssVideo.mp4) cambia giph
 
 Installing and running
 ----------------------
@@ -23,3 +26,44 @@ On Ubuntu, this can be accomplished by:
 * Get the location. In my case this was `/usr/local/lib/python2.7/dist-packages`
 * Create symlink: `ln -s path/to/simulator/sr/robot /usr/local/lib/python2.7/dist-packages/sr/`
 
+## How to Install
+
+To **run** this code you have to follow a few of steps:
+* clone the repository
+  ```bash
+  $ git clone https://github.com/fabiogueunige/RT1_Assignment1.git
+  ```
+* move inside robot-sim folder 
+ ```bash
+  $ cd robot-sim/
+  ```
+* run the code:
+  ```bash
+  $ python3 run.py assignment.py 
+  ```
+
+Usage
+--------------------------------
+
+You can download the package and make all your changes (this is the [Licence](https://github.com/fabiogueunige/RT1_Assignment1/blob/main/robot-sim/LICENSE.md) for the distribution.
+
+To **run** all your scripts use run.py before your node-name file, as follow:
+```bash
+$ python3 run.py <node_fle>
+```
+
+Contribution
+--------------------------------
+
+Please, do not push changes to this project, but if you want you are free to download it.  
+The actual organization is composed by two branches:
+* main -> There are all the files necessary for the environment and the Robot operation.
+* readRes -> All the resources for the Readme construction.
+
+## Possible Improvements
+
+There are several improvements that can be made to the project such as:
+* environment changes: Create a more randomic environment and a more randomic starting position for the Robot
+* functions: New possible function for different situations like:
+* * wall escaping: Escape from a wall of the arena when the Robot is stuck (understand also when it is really stuck)
+  * 
