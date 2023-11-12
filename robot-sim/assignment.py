@@ -69,6 +69,9 @@ def turn(speed, seconds):
 def turning_back(vel):
     """
     Function to escape from the token
+
+    Args: 
+        vel (int): the speed of the wheels
     """
     drive(-6*vel, tempo)
     turn (5*velocity, 1.2) #90 degrees angle
@@ -79,7 +82,7 @@ def turning_back(vel):
 # SENSORS #
 ###########
 
-def find_right_token(tkdone): # Find the closest token still not taken
+def find_right_token(tkdone): 
     """
     Function to find the closest token
 
@@ -100,7 +103,7 @@ def find_right_token(tkdone): # Find the closest token still not taken
             rot_y = token.rot_y
             tcode = token.info.code
             distmin = dist
-            #print("finding the right token okay")
+            
     if dist == 100:
         return -1, -1,-1
     else:
@@ -128,8 +131,6 @@ def find_all_token(tkseen,tkorigin):
             if token.info.code not in tkseen:
                 dist = token.dist
                 rot_y = token.rot_y
-                # should give the absolute angle /((i+1)*(1/5)*velocity*tempo)
-                #No becouse it is tangent velocity, not angular.
                 tcode = token.info.code
                 tkorigin.append([tcode,dist,rot_y])
                 tkseen.add(tcode)
@@ -157,9 +158,8 @@ def get_station(tko):
         if token.dist < distmin and token.info.code == tko:
             dist = token.dist
             rot_y = token.rot_y
-            #print("getting the station")
+            
     if dist == 100:
-        #print("No Token in the station")
         return -1, -1
     else:
         return dist, rot_y
@@ -178,6 +178,7 @@ def reaching_token(dist, rot, tk,tkdone):
         rot (float): angle between the robot and the token
         tk (int): code of the token
         tkdone (set): set of all the token done
+    
     Returns: 
         control (int): control variable for the manager
     """
@@ -194,27 +195,24 @@ def reaching_token(dist, rot, tk,tkdone):
         turning_back(velocity)
         control = 0
 
-    elif -a_th <= rot <= a_th:  # if the robot is well aligned with the token, we go forward
-            #print("Just going straight")
+    elif -a_th <= rot <= a_th:  
             if dist < disnear:
                 drive(5*velocity, tempo/4)
             else:
                 drive(10*velocity, tempo/4)
             control = 1
     
-    elif rot< -a_th:  # if the robot is not well aligned with the token, we move it on the left or on the right 
+    elif rot< -a_th:  
         turn(-2*velocity, tempo/12)
         drive(2*velocity,tempo/4)
         control =2
     
     elif rot> a_th:
-        #print("Right a bit...")
         turn(+2*velocity, tempo/12)
         drive(2*velocity,tempo/4)
         control = 3
     
-    else: # Exeption, keep looking for the token
-        #print("Error then turning")
+    else: 
         turn (12*velocity, tempo/12)
     
     return control
@@ -227,6 +225,7 @@ def reaching_token(dist, rot, tk,tkdone):
 def menager(distance,angle,tk,tkdone):
     """
     Function to manage the operations (taking or leaving the token)
+    
     Args: 
         distance (float): distance of the closest token (-1 if no token is detected)
         angle (float): angle between the robot and the token (-1 if no token is detected)
@@ -242,20 +241,17 @@ def menager(distance,angle,tk,tkdone):
             
             (distance, angle, tk) = find_right_token(tkdone)
             if (distance == -1):
-                #print("Reach not done error")
                 turn(velocity,tempo)
             elif (control!=0):
                 control = reaching_token(distance, angle, tk,tkdone)
-                #print("Reach not done keep going")
 
         else:
             (distance, angle) = get_station(tk)
             if (distance == -1):
-                #print("No Station found")
                 turn(velocity,tempo)
             else:
                 control = reaching_token(distance, angle, tk,tkdone)
-                #print("Station okay")
+                
 
     
 ###################
