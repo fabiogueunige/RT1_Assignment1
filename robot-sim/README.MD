@@ -4,97 +4,183 @@ Python Robotics Assignment 1
 This is a simple, portable robot simulator developed by [Student Robotics](https://studentrobotics.org).
 Some of the arenas and the exercises have been modified for the Research Track I course
 
-Installing and running
+Assignment
 ----------------------
 
-The simulator requires a Python 2.7 installation, the [pygame](http://pygame.org/) library, [PyPyBox2D](https://pypi.python.org/pypi/pypybox2d/2.1-r331), and [PyYAML](https://pypi.python.org/pypi/PyYAML/).
-
-Pygame, unfortunately, can be tricky (though [not impossible](http://askubuntu.com/q/312767)) to install in virtual environments. If you are using `pip`, you might try `pip install hg+https://bitbucket.org/pygame/pygame`, or you could use your operating system's package manager. Windows users could use [Portable Python](http://portablepython.com/). PyPyBox2D and PyYAML are more forgiving, and should install just fine using `pip` or `easy_install`.
-
-## Troubleshooting
-
-When running `python run.py <file>`, you may be presented with an error: `ImportError: No module named 'robot'`. This may be due to a conflict between sr.tools and sr.robot. To resolve, symlink simulator/sr/robot to the location of sr.tools.
-
-On Ubuntu, this can be accomplished by:
-* Find the location of srtools: `pip show sr.tools`
-* Get the location. In my case this was `/usr/local/lib/python2.7/dist-packages`
-* Create symlink: `ln -s path/to/simulator/sr/robot /usr/local/lib/python2.7/dist-packages/sr/`
-
-## Exercise
------------------------------
-
-To run one or more scripts in the simulator, use `run.py`, passing it the file names. 
-
-I am proposing you three exercises, with an increasing level of difficulty.
-The instruction for the three exercises can be found inside the .py files (exercise1.py, exercise2.py, exercise3.py).
-
-When done, you can run the program with:
-
-```bash
-$ python3 run.py assignment1.py
-```
+## Fast Explenation
 
 
-Robot API
----------
+* The code starts by initializing the robot and setting up constants and thresholds.
+* It defines functions for motion, sensor readings, reaching tokens, operation management, and token transport.
+* The main function initializes sets for seen and done tokens, performs an initial token discovery, and then transports the tokens to the station.
+* It checks for additional tokens and transports them if found.
+* Finally, the program terminates.
 
-The API for controlling a simulated robot is designed to be as similar as possible to the [SR API][sr-api].
 
-### Motors ###
 
-The simulated robot has two motors configured for skid steering, connected to a two-output [Motor Board](https://studentrobotics.org/docs/kit/motor_board). The left motor is connected to output `0` and the right motor to output `1`.
 
-The Motor Board API is identical to [that of the SR API](https://studentrobotics.org/docs/programming/sr/motors/), except that motor boards cannot be addressed by serial number. So, to turn on the spot at one quarter of full power, one might write the following:
 
-```python
-R.motors[0].m0.power = 25
-R.motors[0].m1.power = -25
-```
+# Importing necessary libraries
+from __future__ import print_function
+import time
+from sr.robot import *
 
-### The Grabber ###
+# Initializing the robot
+R = Robot()
 
-The robot is equipped with a grabber, capable of picking up a token which is in front of the robot and within 0.4 metres of the robot's centre. To pick up a token, call the `R.grab` method:
+# Setting up constants and thresholds
+velocity = 10
+tempo = 1/2
+a_th = 2.0
+d_th = 0.4
+d_th_reach = 0.7 #to release 
+disnear = 1.5
+lap = 120
 
-```python
-success = R.grab()
-```
+# Function to set linear velocity
+function drive(speed, seconds):
+    R.motors[0].m0.power = speed
+    R.motors[0].m1.power = speed
+    sleep(seconds)
+    R.motors[0].m0.power = 0
+    R.motors[0].m1.power = 0
 
-The `R.grab` function returns `True` if a token was successfully picked up, or `False` otherwise. If the robot is already holding a token, it will throw an `AlreadyHoldingSomethingException`.
+# Function to set angular velocity
+function turn(speed, seconds):
+    R.motors[0].m0.power = speed
+    R.motors[0].m1.power = -speed
+    sleep(seconds)
+    R.motors[0].m0.power = 0
+    R.motors[0].m1.power = 0
 
-To drop the token, call the `R.release` method.
+# Function to escape from the token
+function turning_back(vel):
+    drive(-6*vel, tempo)
+    turn (5*velocity, 1.2)
 
-Cable-tie flails are not implemented.
+# Function to find the closest token still not taken
+function find_right_token(tkdone):
+    dist = 100
+    distmin = 100
+    tcode = -1
+    for token in R.see():
+        if token.dist < distmin and token.info.code not in tkdone:
+            dist = token.dist
+            rot_y = token.rot_y
+            tcode = token.info.code
+            distmin = dist
+    if dist == 100:
+        return -1, -1, -1
+    else:
+        return dist, rot_y, tcode
 
-### Vision ###
+# Function to find all the tokens
+function find_all_token(tkseen, tkorigin):
+    dist = 100
+    for i in range(0, lap):
+        for token in R.see():
+            if token.info.code not in tkseen:
+                dist = token.dist
+                rot_y = token.rot_y
+                tcode = token.info.code
+                tkorigin.append([tcode, dist, rot_y])
+                tkseen.add(tcode)
+        if dist == -1:
+            print("No token detected in the research of all")
+        turn(4*velocity, tempo/20)
 
-To help the robot find tokens and navigate, each token has markers stuck to it, as does each wall. The `R.see` method returns a list of all the markers the robot can see, as `Marker` objects. The robot can only see markers which it is facing towards.
+# Function to find the station
+function get_station(tko):
+    dist = 100
+    distmin = 100
+    for token in R.see():
+        if token.dist < distmin and token.info.code == tko:
+            dist = token.dist
+            rot_y = token.rot_y
+    if dist == 100:
+        return -1, -1
+    else:
+        return dist, rot_y
 
-Each `Marker` object has the following attributes:
+# Function to reach the tokens
+function reaching_token(dist, rot, tk, tkdone):
+    if dist < d_th and tk not in tkdone:
+        R.grab()
+        print("Taking the token ", tk)
+        tkdone.add(tk)
+        turning_back(velocity)
+        control = 0
+    elif dist < d_th_reach and tk in tkdone:
+        print("Leaving the token ")
+        R.release()
+        turning_back(velocity)
+        control = 0
+    elif -a_th <= rot <= a_th:
+        if dist < disnear:
+            drive(5*velocity, tempo/4)
+        else:
+            drive(10*velocity, tempo/4)
+        control = 1
+    elif rot < -a_th:
+        turn(-velocity, tempo/4)
+        drive(2*velocity, tempo/2)
+        control = 2
+    elif rot > a_th:
+        turn(velocity, tempo/4)
+        drive(2*velocity, tempo/2)
+        control = 3
+    else:
+        turn(2*velocity, tempo)
+    return control
 
-* `info`: a `MarkerInfo` object describing the marker itself. Has the following attributes:
-  * `code`: the numeric code of the marker.
-  * `marker_type`: the type of object the marker is attached to (either `MARKER_TOKEN_GOLD`, `MARKER_TOKEN_SILVER` or `MARKER_ARENA`).
-  * `offset`: offset of the numeric code of the marker from the lowest numbered marker of its type. For example, token number 3 has the code 43, but offset 3.
-  * `size`: the size that the marker would be in the real game, for compatibility with the SR API.
-* `centre`: the location of the marker in polar coordinates, as a `PolarCoord` object. Has the following attributes:
-  * `length`: the distance from the centre of the robot to the object (in metres).
-  * `rot_y`: rotation about the Y axis in degrees.
-* `dist`: an alias for `centre.length`
-* `res`: the value of the `res` parameter of `R.see`, for compatibility with the SR API.
-* `rot_y`: an alias for `centre.rot_y`
-* `timestamp`: the time at which the marker was seen (when `R.see` was called).
+# Function to manage the operations
+function manager(distance, angle, tk, tkdone):
+    control = -1
+    while (control != 0):
+        if tk not in tkdone:
+            if (distance != -1):
+                control = reaching_token(distance, angle, tk, tkdone)
+            (distance, angle, tk) = find_right_token(tkdone)
+            if (distance == -1):
+                turn(velocity, tempo)
+            elif (control != 0):
+                control = reaching_token(distance, angle, tk, tkdone)
+        else:
+            (distance, angle) = get_station(tk)
+            if (distance == -1):
+                turn(velocity, tempo)
+            else:
+                control = reaching_token(distance, angle, tk, tkdone)
 
-For example, the following code lists all of the markers the robot can see:
+# Function to transport the tokens from their position to the station
+function token_transport(tkseen, tkdone, tkorigin):
+    distance = 0
+    angle = 0
+    while (len(tkseen) != len(tkdone)):
+        (distance, angle, tc) = find_right_token(tkdone)
+        manager(distance, angle, tc, tkdone)
+        manager(distance, angle, tkorigin[0][0], tkdone)
 
-```python
-markers = R.see()
-print "I can see", len(markers), "markers:"
+# Main function
+function main():
+    tkseen = set()
+    tkdone = set()
+    counter = 0
+    tkorigin = []
+    drive(2*velocity, tempo)
+    find_all_token(tkseen, tkorigin)
+    tkdone.add(tkorigin[0][0])
+    token_transport(tkseen, tkdone, tkorigin)
+    print("Checking if there are other tokens")
+    counter = len(tkseen)
+    find_all_token(tkseen, tkorigin)
+    if (counter - len(tkseen) != 0):
+        token_transport(tkseen, tkdone, tkorigin)
+    else:
+        print("All the tokens have been found")
+    print("The program terminates")
+    exit()
 
-for m in markers:
-    if m.info.marker_type in (MARKER_TOKEN_GOLD, MARKER_TOKEN_SILVER):
-        print " - Token {0} is {1} metres away".format( m.info.offset, m.dist )
-    elif m.info.marker_type == MARKER_ARENA:
-        print " - Arena marker {0} is {1} metres away".format( m.info.offset, m.dist )
-```
+# Execution
+main()
 
-[sr-api]: https://studentrobotics.org/docs/programming/sr/
