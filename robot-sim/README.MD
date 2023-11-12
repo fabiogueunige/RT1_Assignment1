@@ -1,14 +1,12 @@
 Python Robotics Assignment 1
 ================================
 
-This is a simple, portable robot simulator developed by [Student Robotics](https://studentrobotics.org).
-Some of the arenas and the exercises have been modified for the Research Track I course
+This is the explanetion of the `assignment.py` code through a pseudocode step by step  
 
 Assignment
 ----------------------
 
 ## Fast Explenation
-
 
 * The code starts by initializing the robot and setting up constants and thresholds.
 * It defines functions for motion, sensor readings, reaching tokens, operation management, and token transport.
@@ -16,49 +14,34 @@ Assignment
 * It checks for additional tokens and transports them if found.
 * Finally, the program terminates.
 
+### Importing necessary libraries
+
+### Initializing the robot  
+Robot init
+
+### Setting up constants and thresholds  
+*velocity   : common velocity
+*tempo      : common time
+*a_th       : angle treshold
+*d_th       : distance treshold to grab the token
+*d_th_reach : distance treshold to release the token
+*disnear    : distance to slow down Robot velocity
+*lap        : number of turns to have always 360 degree 
+
+### Library functions  
+
+| Name     | Input                    | Return   | Description                       |
+| ---------| ------------------------ | -------- | --------------------------------- |
+| drive    | speed(int), seconds(int) | void     | Moves the Robot linear            |
+| turn     | speed(int), seconds(int) | void     | Makes the robot turning on itself |
 
 
-
-
-# Importing necessary libraries
-from __future__ import print_function
-import time
-from sr.robot import *
-
-# Initializing the robot
-R = Robot()
-
-# Setting up constants and thresholds
-velocity = 10
-tempo = 1/2
-a_th = 2.0
-d_th = 0.4
-d_th_reach = 0.7 #to release 
-disnear = 1.5
-lap = 120
-
-# Function to set linear velocity
-function drive(speed, seconds):
-    R.motors[0].m0.power = speed
-    R.motors[0].m1.power = speed
-    sleep(seconds)
-    R.motors[0].m0.power = 0
-    R.motors[0].m1.power = 0
-
-# Function to set angular velocity
-function turn(speed, seconds):
-    R.motors[0].m0.power = speed
-    R.motors[0].m1.power = -speed
-    sleep(seconds)
-    R.motors[0].m0.power = 0
-    R.motors[0].m1.power = 0
-
-# Function to escape from the token
+### Function to escape from the token
 function turning_back(vel):
     drive(-6*vel, tempo)
     turn (5*velocity, 1.2)
 
-# Function to find the closest token still not taken
+### Function to find the closest token still not taken
 function find_right_token(tkdone):
     dist = 100
     distmin = 100
@@ -74,7 +57,7 @@ function find_right_token(tkdone):
     else:
         return dist, rot_y, tcode
 
-# Function to find all the tokens
+### Function to find all the tokens
 function find_all_token(tkseen, tkorigin):
     dist = 100
     for i in range(0, lap):
@@ -89,7 +72,7 @@ function find_all_token(tkseen, tkorigin):
             print("No token detected in the research of all")
         turn(4*velocity, tempo/20)
 
-# Function to find the station
+### Function to find the station
 function get_station(tko):
     dist = 100
     distmin = 100
@@ -102,7 +85,7 @@ function get_station(tko):
     else:
         return dist, rot_y
 
-# Function to reach the tokens
+### Function to reach the tokens
 function reaching_token(dist, rot, tk, tkdone):
     if dist < d_th and tk not in tkdone:
         R.grab()
@@ -133,7 +116,7 @@ function reaching_token(dist, rot, tk, tkdone):
         turn(2*velocity, tempo)
     return control
 
-# Function to manage the operations
+### Function to manage the operations
 function manager(distance, angle, tk, tkdone):
     control = -1
     while (control != 0):
@@ -152,7 +135,7 @@ function manager(distance, angle, tk, tkdone):
             else:
                 control = reaching_token(distance, angle, tk, tkdone)
 
-# Function to transport the tokens from their position to the station
+### Function to transport the tokens from their position to the station
 function token_transport(tkseen, tkdone, tkorigin):
     distance = 0
     angle = 0
@@ -161,7 +144,7 @@ function token_transport(tkseen, tkdone, tkorigin):
         manager(distance, angle, tc, tkdone)
         manager(distance, angle, tkorigin[0][0], tkdone)
 
-# Main function
+### Main function
 function main():
     tkseen = set()
     tkdone = set()
@@ -181,6 +164,7 @@ function main():
     print("The program terminates")
     exit()
 
-# Execution
+### Execution  
+
 main()
 
