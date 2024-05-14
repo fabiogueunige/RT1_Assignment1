@@ -1,13 +1,13 @@
 from __future__ import print_function
 
 import time
+import signal
+import os
 from sr.robot import *
-
 
 R = Robot()
 
 """
-
 Possible procedure:
 robot makes 360 to find all the tokens and puts them in list saving the distamces, the angle and the code of every one
 
@@ -302,6 +302,7 @@ def main():
     counter = 0
     # Tmp Token
     tkorigin = [] # All token info, can be useful
+    start_time = time.time()  # Start time
     drive(2*velocity, tempo)
 
     # Start understanding the environment and his position with respect to the tokens
@@ -310,19 +311,30 @@ def main():
 
     # Go to the tokens seen
     token_transport(tkseen,tkdone,tkorigin)
+    end_time = time.time()  # End time 
+    elapsed_time1 = end_time - start_time # time for the first check
+
+    while True:
+        # Check if there are other tokens
+        print("Checking if there are other tokens")
+        counter = len(tkseen)
+        find_all_token(tkseen,tkorigin)
+        if (counter-len(tkseen)!=0):
+            token_transport(tkseen,tkdone,tkorigin)
+        else:
+            print("All the tokens have been found")
+            end_time = time.time()  # End time 
+            elapsed_time2 = end_time - start_time # time for the first check
+            break
     
-    # Check if there are other tokens
-    print("Checking if there are other tokens")
-    counter = len(tkseen)
-    find_all_token(tkseen,tkorigin)
-    if (counter-len(tkseen)!=0):
-        token_transport(tkseen,tkdone,tkorigin)
-    else:
-        print("All the tokens have been found")
-    
+    with open('time_log.txt', 'a') as f:
+        # f.write("New attempt\n")
+        f.write(str(elapsed_time1) + '\n')
+        f.write(str(elapsed_time2) + '\n')
+
     print("The program terminates")
-
-
+    os.kill(os.getpid(), signal.SIGINT)
+    exit()
 
 
 ###############
