@@ -327,7 +327,7 @@ def main():
             elapsed_time2 = end_time - start_time # time for the first check
             break
     
-    with open('time_log.txt', 'a') as f:
+    with open('time_log2.txt', 'a') as f:
         # f.write("New attempt\n")
         f.write(str(elapsed_time1) + '\n')
         f.write(str(elapsed_time2) + '\n')
